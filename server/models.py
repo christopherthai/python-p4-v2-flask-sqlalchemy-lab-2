@@ -19,10 +19,11 @@ class Customer(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
-    seritalize_rules = ("-reviews.customer",)
+    serialize_rules = ("-reviews.customer",)
 
-    reviews = db.Relationship("Review", back_populates="customer")
+    reviews = db.relationship("Review", back_populates="customer")
 
+    # Association proxy to get items for this customer through reviews
     items = association_proxy(
         "reviews", "item", creator=lambda item_obj: Review(item=item_obj)
     )
@@ -38,9 +39,9 @@ class Item(db.Model, SerializerMixin):
     name = db.Column(db.String)
     price = db.Column(db.Float)
 
-    seritalize_rules = ("-reviews.item",)
+    serialize_rules = ("-reviews.item",)
 
-    reviews = db.Relationship("Review", back_populates="item")
+    reviews = db.relationship("Review", back_populates="item")
 
     def __repr__(self):
         return f"<Item {self.id}, {self.name}, {self.price}>"
@@ -51,8 +52,6 @@ class Review(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.String)
-
-    serialize_rules = ("-customer.reviews", "-item.reviews")
 
     serialize_rules = ("-customer.reviews", "-item.reviews")
 
